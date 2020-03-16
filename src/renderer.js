@@ -60,16 +60,16 @@ electron_1.ipcRenderer.on('about-window:info', (_, info) => {
     }
     if (info.use_version_info) {
         const versions = document.querySelector('.versions');
-        const custom_version_info = typeof info.use_version_info !== 'boolean';
-        const vs = custom_version_info ? info.use_version_info : process.versions;
-        const keys = custom_version_info ? Object.keys(info.use_version_info) : ['electron', 'chrome', 'node', 'v8'];
-        for (const name of keys) {
+        const version_info = Array.isArray(info.use_version_info)
+            ? info.use_version_info
+            : ['electron', 'chrome', 'node', 'v8'].map(e => [e, process.versions[e]]);
+        for (const [name, value] of version_info) {
             const tr = document.createElement('tr');
             const name_td = document.createElement('td');
             name_td.innerText = name;
             tr.appendChild(name_td);
             const version_td = document.createElement('td');
-            version_td.innerText = ' : ' + vs[name];
+            version_td.innerText = ' : ' + value;
             tr.appendChild(version_td);
             versions.appendChild(tr);
         }
